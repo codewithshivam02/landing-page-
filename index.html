@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shipyard 27</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Shipyard 27 — a two-day build summit for student developers in Pune, 20–21 February 2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a blueprint sheet. Dot-grid ground, a title block in the hero, sections ruled like drawing sheets. */
+:root {
+  --bg: #eef2f7;
+  --surface: #ffffff;
+  --ink: #12203a;
+  --muted: #55627a;
+  --line: #c9d3e2;
+  --grid: #c9d3e2;
+  --accent: #e0662a;      /* safety orange, the dock-crane colour */
+  --accent-ink: #ffffff;
+  --blue: #2f5fd0;
+  --ok: #1f8a5b;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 6px;
+  --maxw: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1626; --surface: #132036; --ink: #e6ecf7; --muted: #94a3bd;
+    --line: #263652; --grid: #1f2d46; --accent: #f07a3e; --accent-ink: #1a0d05;
+    --blue: #7ea2ff; --ok: #4cc28d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1626; --surface: #132036; --ink: #e6ecf7; --muted: #94a3bd;
+  --line: #263652; --grid: #1f2d46; --accent: #f07a3e; --accent-ink: #1a0d05;
+  --blue: #7ea2ff; --ok: #4cc28d; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font: 400 1rem/1.6 var(--font-body);
+  margin: 0;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+.wrap {
+  max-width: var(--maxw); margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.mono { font-family: var(--font-mono); }
+.label { font: 600 0.72rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font: 800 1.15rem/1 var(--font-display); text-decoration: none; }
+.brand svg { flex: none; }
+.nav-links { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+.nav-links a { text-decoration: none; font-weight: 500; font-size: 0.95rem; color: var(--muted); }
+.nav-links a:hover { color: var(--ink); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 600 0.95rem/1 var(--font-body); text-decoration: none; cursor: pointer;
+  padding: 12px 18px; border-radius: var(--radius); border: 1.5px solid var(--ink);
+  background: transparent; color: var(--ink); transition: transform .15s ease, background .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.menu-toggle { display: none; background: none; border: 1.5px solid var(--line); border-radius: var(--radius); padding: 8px 10px; color: var(--ink); cursor: pointer; }
+.nav-cta { display: inline-flex; }
+
+@media (max-width: 760px) {
+  .menu-toggle { display: inline-flex; }
+  .nav-cta { display: none; }
+  .nav-links {
+    position: absolute; left: 0; right: 0; top: 100%;
+    flex-direction: column; gap: 0; background: var(--surface); border-bottom: 1px solid var(--line);
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .nav-links a { display: block; padding-block: 14px; border-top: 1px solid var(--line); color: var(--ink); }
+  .nav:not(.open) .nav-links { display: none; }
+}
+
+/* ---------- Hero ---------- */
+.hero .wrap { padding-block: 56px 40px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: end; }
+.hero-copy { display: grid; gap: 22px; min-width: 0; }
+.hero h1 { font-size: clamp(3.2rem, 10vw, 7.2rem); font-weight: 800; letter-spacing: -0.045em; line-height: 0.9; }
+.hero h1 .num { color: var(--accent); }
+.hero .lede { font-size: 1.15rem; max-width: 34ch; color: var(--muted); }
+.hero .lede strong { color: var(--ink); font-weight: 600; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Title block, like the corner box on an engineering drawing */
+.titleblock { background: var(--surface); border: 1.5px solid var(--ink); border-radius: var(--radius); font-family: var(--font-mono); font-size: 0.85rem; min-width: 0; }
+.titleblock .row { display: grid; grid-template-columns: 9.5em 1fr; border-bottom: 1px solid var(--line); }
+.titleblock .row:last-child { border-bottom: 0; }
+.titleblock .row > * { padding: 10px 14px; }
+.titleblock dt { color: var(--muted); border-right: 1px solid var(--line); text-transform: uppercase; letter-spacing: .08em; font-size: .72rem; display: flex; align-items: center; }
+.titleblock dd { margin: 0; font-weight: 600; }
+.countdown { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1.5px solid var(--ink); }
+.countdown div { padding: 12px 6px; text-align: center; border-right: 1px solid var(--line); }
+.countdown div:last-child { border-right: 0; }
+.countdown b { display: block; font: 700 1.6rem/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.countdown span { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+
+.stats { border-block: 1px solid var(--line); background: var(--surface); }
+.stats .wrap { display: grid; grid-template-columns: repeat(4, 1fr); padding-block: 0; }
+.stat { padding: 20px 16px; border-right: 1px solid var(--line); display: grid; gap: 4px; }
+.stat:first-child { padding-left: 0; }
+.stat:last-child { border-right: 0; }
+.stat b { font: 800 2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: .9rem; }
+
+/* ---------- Sections ---------- */
+section.block { padding-block: 80px; }
+.sec-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; margin-bottom: 36px; }
+.sec-head .label { display: block; margin-bottom: 12px; }
+.sec-head p { max-width: 48ch; color: var(--muted); }
+
+/* Tracks */
+.tracks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1.5px solid var(--ink); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.track { padding: 26px; display: grid; gap: 12px; align-content: start; border-right: 1px solid var(--line); min-width: 0; }
+.track:last-child { border-right: 0; }
+.track .tag { font: 600 .75rem/1 var(--font-mono); color: var(--accent); }
+.track p { color: var(--muted); }
+.track ul { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: .92rem; }
+.track li::before { content: "→ "; color: var(--accent); font-family: var(--font-mono); }
+
+/* Schedule */
+.tabs { display: inline-flex; border: 1.5px solid var(--ink); border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; }
+.tabs button { font: 600 .9rem/1 var(--font-body); padding: 12px 18px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
+.tabs button + button { border-left: 1.5px solid var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.agenda { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.agenda li { display: grid; grid-template-columns: 7.5em 1fr auto; gap: 20px; padding: 18px 22px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.agenda li:last-child { border-bottom: 0; }
+.agenda time { font: 600 .9rem/1.4 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--muted); }
+.agenda .what { min-width: 0; }
+.agenda .what b { display: block; font-weight: 600; }
+.agenda .what span { color: var(--muted); font-size: .92rem; }
+.pill { font: 600 .7rem/1 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; padding: 6px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.build { color: var(--accent); }
+.pill.talk { color: var(--blue); }
+.pill.break { color: var(--muted); }
+
+/* Speakers */
+.speakers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.speaker { display: grid; gap: 12px; min-width: 0; }
+.avatar { aspect-ratio: 1; max-width: 100%; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; font: 800 2.4rem/1 var(--font-display); color: var(--ink); position: relative; overflow: hidden; }
+.avatar::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 16px 16px; opacity: .6; }
+.avatar span { position: relative; z-index: 1; }
+.speaker:nth-child(odd) .avatar span { color: var(--accent); }
+.speaker:nth-child(even) .avatar span { color: var(--blue); }
+.speaker b { font-weight: 600; display: block; }
+.speaker small { color: var(--muted); font-size: .88rem; }
+
+/* Tickets */
+.tickets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+.ticket { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; display: grid; gap: 16px; grid-template-rows: auto auto 1fr auto; }
+.ticket.featured { border: 1.5px solid var(--accent); box-shadow: 6px 6px 0 var(--accent); }
+.ticket .price { font: 800 2.4rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.ticket .price small { font: 500 .9rem var(--font-body); color: var(--muted); }
+.ticket ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: .95rem; align-content: start; }
+.ticket li::before { content: "✓ "; color: var(--ok); font-weight: 700; }
+.seats { font-family: var(--font-mono); font-size: .8rem; color: var(--muted); }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+
+/* Register + FAQ */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.split > * { min-width: 0; }
+form { background: var(--surface); border: 1.5px solid var(--ink); border-radius: var(--radius); padding: 28px; display: grid; gap: 16px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; font-size: .9rem; }
+.field input, .field select {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line);
+  border-radius: var(--radius); padding: 11px 12px; width: 100%;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); outline: none; }
+.field .err { color: var(--accent); font-size: .82rem; min-height: 1em; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.success { border: 1.5px solid var(--ok); color: var(--ok); border-radius: var(--radius); padding: 14px; font-weight: 600; }
+details { border-bottom: 1px solid var(--line); padding-block: 16px; }
+details:first-of-type { border-top: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-family: var(--font-mono); color: var(--accent); }
+details[open] summary::after { content: "–"; }
+details p { margin-top: 10px; color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); background: var(--surface); }
+footer .wrap { padding-block: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .9rem; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .hero .wrap { grid-template-columns: 1fr; align-items: start; }
+  .speakers { grid-template-columns: repeat(2, 1fr); }
+  .tickets { grid-template-columns: 1fr; }
+  .split { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .tracks { grid-template-columns: 1fr; }
+  .track { border-right: 0; border-bottom: 1px solid var(--line); }
+  .track:last-child { border-bottom: 0; }
+  .stats .wrap { grid-template-columns: repeat(2, 1fr); }
+  .stat { padding-left: 0; }
+  .stat:nth-child(2) { border-right: 0; }
+  .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .stat:nth-child(even) { padding-left: 16px; }
+  section.block { padding-block: 56px; }
+  .agenda li { grid-template-columns: 1fr auto; gap: 6px 14px; }
+  .agenda time { grid-column: 1 / -1; }
+}
+@media (max-width: 460px) {
+  .row2 { grid-template-columns: 1fr; }
+  .titleblock .row { grid-template-columns: 7.5em 1fr; }
+  .countdown b { font-size: 1.3rem; }
+  .speakers { gap: 14px; }
+}
+</style>
+</head>
+<body>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Shipyard 27 home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 18h16l-3 4H9z" fill="var(--accent)"/><path d="M14 5v11M14 5l6 8h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      Shipyard 27
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#tracks">Tracks</a></li>
+      <li><a href="#schedule">Schedule</a></li>
+      <li><a href="#speakers">Speakers</a></li>
+      <li><a href="#tickets">Tickets</a></li>
+      <li><a href="#register">Register</a></li>
+    </ul>
+    <a class="btn btn-primary nav-cta" href="#register">Get a pass</a>
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="label">Build summit · Pune · Feb 2027</span>
+        <h1>Ship<br>yard<span class="num">/27</span></h1>
+        <p class="lede"><strong>27 hours to take one idea from sketch to deployed.</strong> Two days of workshops, mentor reviews and a demo-day dock for student developers.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#register">Register free</a>
+          <a class="btn" href="#schedule">See the schedule</a>
+        </div>
+      </div>
+
+      <div class="titleblock" aria-label="Event details">
+        <dl style="margin:0">
+          <div class="row"><dt>Event</dt><dd>Shipyard 27</dd></div>
+          <div class="row"><dt>Dates</dt><dd>20–21 Feb 2027</dd></div>
+          <div class="row"><dt>Doors</dt><dd>09:00 IST, Sat</dd></div>
+          <div class="row"><dt>Venue</dt><dd>Dock Hall 3, Hinjewadi, Pune</dd></div>
+          <div class="row"><dt>Format</dt><dd>In person · teams of 2–4</dd></div>
+        </dl>
+        <div class="countdown" id="countdown" aria-live="polite">
+          <div><b id="cd-d">—</b><span>days</span></div>
+          <div><b id="cd-h">—</b><span>hrs</span></div>
+          <div><b id="cd-m">—</b><span>min</span></div>
+          <div><b id="cd-s">—</b><span>sec</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="wrap">
+      <div class="stat"><b>27 h</b><span>build window</span></div>
+      <div class="stat"><b>600</b><span>builders</span></div>
+      <div class="stat"><b>40</b><span>mentors on the floor</span></div>
+      <div class="stat"><b>₹3 L</b><span>in prizes</span></div>
+    </div>
+  </div>
+
+  <section class="block" id="tracks">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="label">Tracks</span><h2>Pick a berth</h2></div>
+        <p>Every team registers for one track. Judges score on a working deploy, not on slides.</p>
+      </div>
+      <div class="tracks">
+        <article class="track">
+          <span class="tag">TRACK A</span>
+          <h3>Applied AI</h3>
+          <p>Ship a model-backed feature that real users can try during demo hour.</p>
+          <ul><li>Retrieval and agents</li><li>On-device inference</li><li>Eval harness required</li></ul>
+        </article>
+        <article class="track">
+          <span class="tag">TRACK B</span>
+          <h3>Civic &amp; Health</h3>
+          <p>Tools for clinics, transit and local government, built with open data from Pune.</p>
+          <ul><li>Hospital queue systems</li><li>PMPML transit data</li><li>Offline-first mobile</li></ul>
+        </article>
+        <article class="track">
+          <span class="tag">TRACK C</span>
+          <h3>Dev Tooling</h3>
+          <p>CLIs, editors and infra that make the next 36 hours shorter for someone else.</p>
+          <ul><li>CLI and editor plugins</li><li>CI/CD and observability</li><li>Open-source only</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="schedule" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="label">Schedule · IST</span><h2>Two days, one deploy</h2></div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Schedule day">
+        <button role="tab" id="tab-1" aria-selected="true" aria-controls="day-1">Sat 20 Feb</button>
+        <button role="tab" id="tab-2" aria-selected="false" aria-controls="day-2">Sun 21 Feb</button>
+      </div>
+      <ol class="agenda" id="day-1" role="tabpanel" aria-labelledby="tab-1">
+        <li><time>09:00</time><div class="what"><b>Check-in and team formation</b><span>Lobby, Dock Hall 3</span></div><span class="pill break">Arrive</span></li>
+        <li><time>10:00</time><div class="what"><b>Keynote: Shipping small, shipping often</b><span>Ananya Kulkarni</span></div><span class="pill talk">Talk</span></li>
+        <li><time>11:00</time><div class="what"><b>Build window opens</b><span>Clock starts. Commits before 11:00 are disqualified.</span></div><span class="pill build">Build</span></li>
+        <li><time>14:00</time><div class="what"><b>Workshop: Deploy in 10 minutes</b><span>Rohan Mehta · Room B</span></div><span class="pill talk">Workshop</span></li>
+        <li><time>19:00</time><div class="what"><b>Mentor review, round one</b><span>15-minute slots, booked at your table</span></div><span class="pill build">Review</span></li>
+        <li><time>23:59</time><div class="what"><b>Midnight chai and lightning demos</b><span>Optional, two minutes each</span></div><span class="pill break">Break</span></li>
+      </ol>
+      <ol class="agenda" id="day-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+        <li><time>08:00</time><div class="what"><b>Breakfast on the floor</b><span>Poha, upma, filter coffee</span></div><span class="pill break">Break</span></li>
+        <li><time>10:00</time><div class="what"><b>Mentor review, round two</b><span>Focus on the deploy and the demo path</span></div><span class="pill build">Review</span></li>
+        <li><time>13:00</time><div class="what"><b>Talk: Evaluating what you built</b><span>Dr. Farah Siddiqui</span></div><span class="pill talk">Talk</span></li>
+        <li><time>14:00</time><div class="what"><b>Code freeze</b><span>Your last push before 14:00 is what gets judged. 27 hours, done.</span></div><span class="pill build">Freeze</span></li>
+        <li><time>15:00</time><div class="what"><b>Demo dock</b><span>Each team gets 4 minutes live on the main screen</span></div><span class="pill talk">Demo</span></li>
+        <li><time>18:00</time><div class="what"><b>Awards and close</b><span>Track winners and the Harbourmaster prize</span></div><span class="pill break">Close</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block" id="speakers" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="label">Speakers &amp; mentors</span><h2>People on the dock</h2></div>
+        <p>All speakers and names on this page are fictional, created for this demo event.</p>
+      </div>
+      <div class="speakers">
+        <div class="speaker"><div class="avatar"><span>AK</span></div><div><b>Ananya Kulkarni</b><small>Platform lead, Tidewater Labs</small></div></div>
+        <div class="speaker"><div class="avatar"><span>RM</span></div><div><b>Rohan Mehta</b><small>SRE, Kestrel Cloud</small></div></div>
+        <div class="speaker"><div class="avatar"><span>FS</span></div><div><b>Dr. Farah Siddiqui</b><small>ML researcher, Deccan AI Group</small></div></div>
+        <div class="speaker"><div class="avatar"><span>VN</span></div><div><b>Vikram Nair</b><small>Founder, Quayside Health</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="tickets" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="label">Passes</span><h2>Choose your pass</h2></div>
+        <p>Student passes are free. Meals, Wi-Fi and a sleeping area are included with every pass.</p>
+      </div>
+      <div class="tickets">
+        <article class="ticket">
+          <span class="label">Spectator</span>
+          <div class="price">₹0 <small>/ day</small></div>
+          <ul><li>Talks and workshops</li><li>Demo dock seating</li><li>No build table</li></ul>
+          <div class="seats">212 of 300 left<div class="bar"><i style="width:29%"></i></div></div>
+        </article>
+        <article class="ticket featured">
+          <span class="label" style="color:var(--accent)">Builder · most chosen</span>
+          <div class="price">₹0 <small>with student ID</small></div>
+          <ul><li>Build table for your team</li><li>Two mentor reviews</li><li>Eligible for all prizes</li><li>Shipyard hoodie</li></ul>
+          <div class="seats">84 of 600 left<div class="bar"><i style="width:86%"></i></div></div>
+        </article>
+        <article class="ticket">
+          <span class="label">Professional</span>
+          <div class="price">₹1,499</div>
+          <ul><li>Build table or mentor slot</li><li>Recruiter lounge access</li><li>Not eligible for student prizes</li></ul>
+          <div class="seats">41 of 120 left<div class="bar"><i style="width:66%"></i></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="register" style="padding-top:0">
+    <div class="wrap split">
+      <div>
+        <div class="sec-head" style="margin-bottom:24px"><div><span class="label">Register</span><h2>Book your berth</h2></div></div>
+        <form id="reg-form" novalidate>
+          <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" placeholder="Priya Sharma"><span class="err" id="e-name"></span></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="priya@college.edu"><span class="err" id="e-email"></span></div>
+          <div class="row2">
+            <div class="field"><label for="f-pass">Pass</label>
+              <select id="f-pass" name="pass"><option>Builder</option><option>Spectator</option><option>Professional</option></select><span class="err"></span></div>
+            <div class="field"><label for="f-track">Track</label>
+              <select id="f-track" name="track"><option>Applied AI</option><option>Civic &amp; Health</option><option>Dev Tooling</option></select><span class="err"></span></div>
+          </div>
+          <button class="btn btn-primary" type="submit">Reserve my spot</button>
+          <div class="success" id="success" role="status" hidden></div>
+        </form>
+      </div>
+      <div>
+        <div class="sec-head" style="margin-bottom:24px"><div><span class="label">FAQ</span><h2>Before you board</h2></div></div>
+        <details open><summary>Who can apply?</summary><p>Any student enrolled in a degree or diploma in 2026–27. Professionals can join with a Professional pass.</p></details>
+        <details><summary>Do I need a team?</summary><p>No. Come alone and join a team during formation at 09:00 on Saturday. Teams are 2 to 4 people.</p></details>
+        <details><summary>Can I start coding early?</summary><p>You can plan and design beforehand. Every commit in your repo must be dated after 11:00 IST on Saturday.</p></details>
+        <details><summary>What should I bring?</summary><p>A laptop, charger, student ID and anything you need to sleep comfortably. We provide food, power and Wi-Fi.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Shipyard 27 is a fictional event built as a front-end demo.</span>
+    <span class="mono">20–21.02.2027 · Pune</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Mobile menu
+  var nav = document.querySelector('.nav');
+  var toggle = document.getElementById('menu-toggle');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  document.querySelectorAll('.nav-links a').forEach(function (a) {
+    a.addEventListener('click', function () { nav.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
+  });
+
+  // Countdown to 20 Feb 2027, 09:00 IST (UTC+5:30)
+  var target = Date.UTC(2027, 1, 20, 3, 30, 0);
+  var els = ['d', 'h', 'm', 's'].map(function (k) { return document.getElementById('cd-' + k); });
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    var diff = Math.max(0, target - Date.now());
+    var s = Math.floor(diff / 1000);
+    var vals = [Math.floor(s / 86400), Math.floor(s % 86400 / 3600), Math.floor(s % 3600 / 60), s % 60];
+    els.forEach(function (el, i) { el.textContent = i === 0 ? vals[i] : pad(vals[i]); });
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Schedule tabs
+  var tabs = document.querySelectorAll('[role="tab"]');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+    });
+  });
+
+  // Registration form (client-side only)
+  var form = document.getElementById('reg-form');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = form.name.value.trim();
+    var email = form.email.value.trim();
+    var ok = true;
+    document.getElementById('e-name').textContent = name.length < 2 ? 'Enter your full name.' : '';
+    document.getElementById('e-email').textContent = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? '' : 'Enter an email like name@college.edu.';
+    if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ok = false;
+    var msg = document.getElementById('success');
+    if (!ok) { msg.hidden = true; return; }
+    msg.textContent = 'Spot reserved for ' + name + ' · ' + form.pass.value + ' pass, ' + form.track.value + ' track. (Demo only: nothing was sent.)';
+    msg.hidden = false;
+    form.reset();
+  });
+})();
+</script>
+</body>
+</html>
